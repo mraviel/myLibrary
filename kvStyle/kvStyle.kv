@@ -1,0 +1,241 @@
+WindowManager:
+    LoginWindow:
+    SignupWindow:
+    WishListWindow:
+    BooksReadWindow:
+
+<LoginWindow>:
+    name: "login_screen"
+    username: username
+    password: password
+    labelName: labelName
+
+    GridLayout:
+        cols: 1
+        size: root.width-200, root.height -200
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        pos: (100, 100)
+
+        AsyncImage:
+            source:"https://upload.wikimedia.org/wikipedia/en/6/6b/Hello_Web_Series_%28Wordmark%29_Logo.png"
+
+        GridLayout:
+            cols:2
+            Label:
+                id: labelName
+                font_name: "Arial"
+                text: "Username"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: username
+                font_name: "Arial"
+                multiline: False
+                padding_y: (20, 20)
+                size_hint: (1, 0.5)
+
+            Label:
+                text: "Password"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: password
+                multiline: False
+                padding_y: (20, 20)
+                size_hint: (0.3, 0.5)
+
+            GridLayout:
+                cols: 2
+                size_hint: (0.6, 0.3)
+                pos: (100, 100)
+
+                Button:
+                    text: "Signup"
+                    size_hint: (0.4, 0.5)
+                    bold: True
+                    background_color: '#ee5146'
+                    on_press:
+                        app.root.current = "signup_screen"
+                        root.manager.transition.direction = "left"
+
+
+            Button:
+                text: "Login"
+                size_hint: (0.4, 0.5)
+                bold: True
+                background_color: '#ee5146'
+                on_press:
+                    app.root.current = "wish_list_screen"
+                    root.manager.transition.direction = "down"
+
+
+<SignupWindow>:
+    name: "signup_screen"
+    username: username
+    email: email
+    password: password
+    confirm_password: confirm_password
+    labelName: labelName
+
+    GridLayout:
+        cols: 1
+        size: root.width-200, root.height -200
+        size_hint: (0.6, 0.7)
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        pos: (100, 100)
+
+        AsyncImage:
+            source:"https://upload.wikimedia.org/wikipedia/en/6/6b/Hello_Web_Series_%28Wordmark%29_Logo.png"
+
+        GridLayout:
+            cols:2
+            Label:
+                id: labelName
+                font_name: "Arial"
+                text: "Username"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: username
+                font_name: "Arial"
+                multiline: False
+                padding_y: (10, 10)
+                size_hint: (1, 0.5)
+
+            Label:
+                text: "Email"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: email
+                multiline: False
+                padding_y: (10, 10)
+                size_hint: (0.3, 0.5)
+
+            Label:
+                text: "Password"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: password
+                multiline: False
+                padding_y: (10, 10)
+                size_hint: (0.3, 0.5)
+
+            Label:
+                text: "Confirm Password"
+                font_size: 18
+                color: '#ee5146'
+            TextInput:
+                id: confirm_password
+                multiline: False
+                padding_y: (10, 10)
+                size_hint: (0.3, 0.5)
+
+            GridLayout:
+                cols: 2
+                size_hint: (0.6, 0.3)
+                pos: (100, 100)
+
+            Button:
+                text: "Signup"
+                size_hint: (0.4, 0.8)
+                bold: True
+                background_color: '#ee5146'
+                on_press:
+                    app.root.current = "login_screen"
+                    root.manager.transition.direction = "right"
+
+<WishListWindow>:
+    name: "wish_list_screen"
+
+    Label:
+        text: "Wish I Could Read..."
+        font_size: self.width / 10
+        font_name: "Arial"
+        pos_hint: {"center_x": 0.5, "center_y": 0.7}
+
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1, 0.1)
+        pos_hint: {"center_x": 0.5, "center_y": 0.9}
+        TextInput:
+            multiline: False
+            font_name: "Arial"
+        Button:
+            text: "Add New Book"
+        Button:
+            background_color: '#ee5146'
+            text: "Books I Read"
+            font_size: self.width / 10
+            on_press:
+                app.root.current = "books_read_screen"
+                root.manager.transition.direction: "top"
+
+
+    ScrollView:
+        size_hint_y: .73
+        pos_hint: {"center_x": 0.5, "center_y": 0.2}
+        do_scroll_x: False
+        do_scroll_y: True
+
+        GridLayout:
+            size: (root.width, root.height)
+            size_hint_x: None
+            size_hint_y: 5
+            cols: int(self.width / 100)
+            height: self.minimum_height
+            row_default_height: 180
+            row_force_default: True
+
+            Button:
+                text: "Book"
+                AsyncImage:
+                    source:"https://simania.co.il/bookimages/covers93/938683.jpg"
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    allow_stretch: True
+                    size: 180, 180
+
+            Button:
+                text: "Book"
+                AsyncImage:
+                    source:"https://simania.co.il/bookimages/covers100/1001256.jpg"
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    allow_stretch: True
+                    size: 180, 180
+
+            Button:
+                text: "Book"
+                AsyncImage:
+                    source:"https://simania.co.il/bookimages/covers99/999910.jpg"
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    allow_stretch: True
+                    size: 180, 180
+
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers100/1001257.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers96/965408.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers2/24590.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers96/967085.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers97/977547.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers97/974873.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers100/1001257.jpg"
+            AsyncImage:
+                source:"https://simania.co.il/bookimages/covers2/24590.jpg"
+
+<BooksReadWindow>:
+    name: "books_read_screen"
+
+    Button:
+        text: "Books i read!"
