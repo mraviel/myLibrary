@@ -2,6 +2,7 @@ import socket
 import select
 import sys
 import pickle
+from kivyApp import LibraryApp
 
 
 # Helper function (formatting)
@@ -36,7 +37,7 @@ def main():
     else:
         host = sys.argv[1]
 
-    port = 5020
+    port = 5021
     buffer = 4096
     data_to_send = []
 
@@ -44,6 +45,7 @@ def main():
     s.settimeout(2)
 
     # Start here the kivy application:
+    LibraryApp().run()
 
     # connecting host
     try:

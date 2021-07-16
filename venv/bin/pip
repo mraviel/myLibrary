@@ -1,4 +1,4 @@
-#!/home/aviel2009/Desktop/projects/myLibrary/venv/bin/python
+#!/home/aviel2009/Desktop/projects/kivyApp/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

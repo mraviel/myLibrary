@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5020
+    port = 5021
 
     database = Database()
 
