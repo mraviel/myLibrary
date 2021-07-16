@@ -30,7 +30,23 @@ class LoginWindow(Screen):
 
 
 class SignupWindow(Screen):
-    pass
+    username = ObjectProperty(None)
+    email = ObjectProperty(None)
+    password = ObjectProperty(None)
+    confirm_password = ObjectProperty(None)
+
+    def signup(self):
+        l = [2]
+        d = {}
+        if self.password.text == self.confirm_password.text and self.username.text != "" and self.email.text != "":
+            d['USERNAME'] = self.username.text
+            d['EMAIL'] = self.email.text
+            d['PASSWORD'] = self.password.text
+            l.append(d)
+            print(l)
+        else:
+            return None
+        return l
 
 
 class WishListWindow(Screen):

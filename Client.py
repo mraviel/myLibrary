@@ -2,7 +2,7 @@ import socket
 import select
 import sys
 import pickle
-from kivyApp import LibraryApp
+from kivyApp import LibraryApp, SignupWindow
 
 
 # Helper function (formatting)
@@ -46,6 +46,7 @@ def main():
 
     # Start here the kivy application:
     LibraryApp().run()
+    print(SignupWindow().signup())
 
     # connecting host
     try:

@@ -144,8 +144,9 @@ WindowManager:
                 bold: True
                 background_color: '#ee5146'
                 on_press:
-                    app.root.current = "login_screen"
-                    root.manager.transition.direction = "right"
+                    a = root.signup()
+                    if a is not None: app.root.current = "login_screen"
+                    if a is not None: root.manager.transition.direction = "right"
 
 <WishListWindow>:
     name: "wish_list_screen"
