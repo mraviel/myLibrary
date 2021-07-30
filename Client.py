@@ -51,34 +51,14 @@ def main(q):
         print("\33[31m\33[1m Can't connect to the server \33[0m")
         sys.exit()
 
-    while True:
-        try:
-            # The data transfer from the kivyApp - Main thread.
-            data_transferred = q.get()
-            print(data_transferred)
+    # The data transfer from the kivyApp - Main thread.
+    data_transferred = q.get()
+    print(data_transferred)
 
-            choice = int(input("\33[34m\33[1m\n Hallo, press\n 1: LOGIN\n 2: SIGNUP  \33[0m"))
-            if choice == 1:  # LOGIN.
-                data_to_send.append(choice)
-                data_to_send.append(log_in())
-                break
-            elif choice == 2:  # SIGNUP.
-                data_to_send.append(choice)
-                data_to_send.append(sign_up())
-                if data_to_send[1]["VALID_PASSWORD"] == data_to_send[1]["PASSWORD"]:  # Valid password
-                    del data_to_send[1]["VALID_PASSWORD"]  # Send the data without valid password
-                    break
-                else:
-                    data_to_send = []  # Reset the data to send.
-                    print("Valid password is not equal to password ")
+    data_to_send = data_transferred  # The data to send to the server.
+    data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
 
-            # Incorrect input, Try again.
-            else:
-                print("Only number: 1 or 2")
-        except ValueError as e:
-            print("Only number: 1 or 2 ", e)
-
-    data_to_send = pickle.dumps(data_to_send)
+    # Send the data - (list).
     s.send(data_to_send)
     display()
     while 1:
@@ -107,4 +87,5 @@ def main(q):
 
 
 if __name__ == "__main__":
-    main()
+    # main(q)
+    pass
