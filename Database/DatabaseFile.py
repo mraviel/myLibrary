@@ -25,9 +25,10 @@ class Database:
     def create_table(self):
         """ Create a table to the database (Only once) """
         try:
-            self.cur.execute('''CREATE TABLE USERS (ID int NOT NULL PRIMARY KEY,
+            self.cur.execute('''CREATE TABLE USERS (UserID int NOT NULL PRIMARY KEY,
                                                     USERNAME varchar(255) NOT NULL UNIQUE CHECK(LENGTH(USERNAME)<=30),
-                                                    PASSWORD varchar(255) NOT NULL)''')
+                                                    PASSWORD varchar(255) NOT NULL,
+                                                    EMAIl varchar(255) NOT NULL UNIQUE)''')
 
         except sqlite3.OperationalError as e:
             print("Table already exits ", e)
@@ -36,22 +37,25 @@ class Database:
         """ Add user to the database """
         count_id = 1
         try:
-            i = self.cur.execute('''SELECT * FROM USERS ORDER BY ID DESC LIMIT 1''')
-            print(count_id)
+            # Keep track of UserID column.
+            i = self.cur.execute('''SELECT * FROM USERS ORDER BY UserID DESC LIMIT 1''')
             count_id = i.fetchall()[0][0] + 1
-            print(count_id)
+
         except sqlite3.IntegrityError and IndexError:
             print("BIG PROBLEM...")
 
-        new_user = '''INSERT INTO USERS VALUES ({0}, "{1}", "{2}")'''.format(count_id, user[0], user[1])
+        # Insert the values to the database.
+        new_user = '''INSERT INTO USERS VALUES ({0}, "{1}", "{2}", "{3}")'''.format(count_id, user[0], user[1], user[2])
         print(new_user)
         try:
             self.cur.execute(new_user)
         except sqlite3.IntegrityError as e:
             print("USERNAME already taken: ", e)
 
-        self.conn.commit()
-        for row in self.cur.execute('SELECT * FROM USERS ORDER BY ID'):
+        self.conn.commit()  # Commit the changes.
+
+        # Print the Users column.
+        for row in self.cur.execute('SELECT * FROM USERS ORDER BY UserID'):
             print(row)
 
     def login(self, user):

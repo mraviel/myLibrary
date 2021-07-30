@@ -44,7 +44,7 @@ if __name__ == "__main__":
                     continue
                 print(data_recv)
 
-                a = [tuple(data_recv[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data_recv[1]][0]  # (USERNAME, PASSWORD)
+                a = [tuple(data_recv[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data_recv[1]][0]  # (USERNAME, PASSWORD)
                 if data_recv[0] == 1:
                     database.login(a)
                 elif data_recv[0] == 2:
