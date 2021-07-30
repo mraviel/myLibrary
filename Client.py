@@ -2,7 +2,7 @@ import socket
 import select
 import sys
 import pickle
-from kivyApp import LibraryApp, SignupWindow
+from queue import Queue
 
 
 # Helper function (formatting)
@@ -29,7 +29,7 @@ def log_in():
     return d
 
 
-def main():
+def main(q):
 
     # can log to ip via command line argument
     if len(sys.argv) < 2:
@@ -44,10 +44,6 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
 
-    # Start here the kivy application:
-    LibraryApp().run()
-    print(SignupWindow().signup())
-
     # connecting host
     try:
         s.connect((host, port))
@@ -57,6 +53,10 @@ def main():
 
     while True:
         try:
+            # The data transfer from the kivyApp - Main thread.
+            data_transferred = q.get()
+            print(data_transferred)
+
             choice = int(input("\33[34m\33[1m\n Hallo, press\n 1: LOGIN\n 2: SIGNUP  \33[0m"))
             if choice == 1:  # LOGIN.
                 data_to_send.append(choice)

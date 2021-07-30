@@ -34,6 +34,7 @@ if __name__ == "__main__":
             if sock == server_socket:
                 # Handle the case in which there is a new connection recieved through server_socket
                 sockfd, addr = server_socket.accept()
+                print("GOOD")
 
                 # Recv list. Ex: [2, {dictionary}]
                 data_recv = sockfd.recv(4096)
