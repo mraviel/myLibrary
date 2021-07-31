@@ -3,6 +3,7 @@ import select
 import sys
 import pickle
 from queue import Queue
+import time
 
 
 # Helper function (formatting)
@@ -60,32 +61,60 @@ def main(q):
 
     # Send the data - (list).
     s.send(data_to_send)
-    display()
+    # display()
+
     while 1:
         socket_list = [sys.stdin, s]
 
         # Get the list of sockets which are readable
-        rList, wList, error_list = select.select(socket_list, [], [])
+        rList, wList, error_list = select.select(socket_list, [], [], 0)
 
-        for sock in rList:
-            # incoming message from server (recv data)
-            if sock == s:
-                data = sock.recv(buffer).decode()
-                if not data:
-                    print('\33[31m\33[1m \rDISCONNECTED!!\n \33[0m')
-                    sys.exit()
-                else:
-                    sys.stdout.write(data)
-                    display()
+        display()
 
-            # user entered a message (send data)
-            else:
-                display()
-                msg = sys.stdin.readline()
-                s.send(msg.encode())
-                # write here all the repeat code (all the input of the program)
+        data_transferred = q.get()
+        print(data_transferred)
+
+        data_to_send = data_transferred  # The data to send to the server.
+        data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
+
+        # Send the data - (list).
+        s.send(data_to_send)
+        # write here all the repeat code (all the input of the program)
+
+        # for sock in rList:
 
 
 if __name__ == "__main__":
     # main(q)
     pass
+
+
+"""
+    for sock in rList:
+        # incoming message from server (recv data)
+        if sock == s:
+            # pass
+
+            data = sock.recv(buffer).decode()
+            if not data:
+                print('\33[31m\33[1m \rDISCONNECTED!!\n \33[0m')
+                sys.exit()
+            else:
+                sys.stdout.write(data)
+                display()
+
+        # user entered a message (send data)
+        else:
+            display()
+
+            data_transferred = q.get()
+            print(data_transferred)
+
+            data_to_send = data_transferred  # The data to send to the server.
+            data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
+
+            # Send the data - (list).
+            s.send(data_to_send)
+            # write here all the repeat code (all the input of the program)
+    # time.sleep(5)
+    """

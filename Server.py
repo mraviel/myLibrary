@@ -28,14 +28,14 @@ if __name__ == "__main__":
     while 1:
         # Get the list sockets which are ready to be read through select
         rList, wList, error_sockets = select.select(connected_list, [], [])
-
         for sock in rList:
             # New connection
             if sock == server_socket:
                 # Handle the case in which there is a new connection recieved through server_socket
                 sockfd, addr = server_socket.accept()
-                print("GOOD")
 
+                print("GOOD")
+                """
                 # Recv list. Ex: [2, {dictionary}]
                 data_recv = sockfd.recv(4096)
                 try:
@@ -51,7 +51,7 @@ if __name__ == "__main__":
                     database.add_user_signup(a)
                 else:
                     pass
-
+                """
                 connected_list.append(sockfd)
 
             # Some incoming message from a client
@@ -61,9 +61,14 @@ if __name__ == "__main__":
                 try:
                     # Handle all the recv code
 
-                    data1 = sock.recv(buffer).decode()
+                    data1 = sock.recv(buffer)
+                    try:
+                        data1 = pickle.loads(data1)
+                    except EOFError:
+                        continue
+                    data = data1
                     # print "sock is: ",sock
-                    data = data1[:data1.index("\n")]
+                    # data = data1[:data1.index("\n")]
                     # print "\n data received: ",data
 
                     # get addr of client sending the message
@@ -75,7 +80,16 @@ if __name__ == "__main__":
                         continue
                     else:
                         # What to do with the data recv?
-                        print(data)
+                        print(data)  # Write the data on the screen.
+
+                        # Insert the data into the database.
+                        a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
+                        if data[0] == 1:
+                            database.login(a)
+                        elif data[0] == 2:
+                            database.add_user_signup(a)
+                        else:
+                            pass
 
                 # Abrupt user exit
                 except:
