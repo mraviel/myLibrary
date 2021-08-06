@@ -30,7 +30,7 @@ def log_in():
     return d
 
 
-def main(q):
+def main(q, q1):
 
     # can log to ip via command line argument
     if len(sys.argv) < 2:
@@ -38,7 +38,7 @@ def main(q):
     else:
         host = sys.argv[1]
 
-    port = 5021
+    port = 5025
     buffer = 4096
     data_to_send = []
 
@@ -52,17 +52,6 @@ def main(q):
         print("\33[31m\33[1m Can't connect to the server \33[0m")
         sys.exit()
 
-    # The data transfer from the kivyApp - Main thread.
-    data_transferred = q.get()
-    print(data_transferred)
-
-    data_to_send = data_transferred  # The data to send to the server.
-    data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
-
-    # Send the data - (list).
-    s.send(data_to_send)
-    # display()
-
     while 1:
         socket_list = [sys.stdin, s]
 
@@ -71,6 +60,7 @@ def main(q):
 
         display()
 
+        # The data transfer from the kivyApp - Main thread.
         data_transferred = q.get()
         print(data_transferred)
 
@@ -79,42 +69,20 @@ def main(q):
 
         # Send the data - (list).
         s.send(data_to_send)
+
         # write here all the repeat code (all the input of the program)
 
-        # for sock in rList:
+        # If log in than recv from the server if the server found the account.
+        if data_transferred[0] == 1:
+            # print("Try Log In")
+            isFound = s.recv(buffer)  # Recv from server if found.
+            s.settimeout(2)
+
+            isFound = eval(isFound.decode())  # --> True / False
+            q1.put(isFound)  # Transact the info to the kivy app (another thread).
+            print(isFound)
 
 
 if __name__ == "__main__":
     # main(q)
     pass
-
-
-"""
-    for sock in rList:
-        # incoming message from server (recv data)
-        if sock == s:
-            # pass
-
-            data = sock.recv(buffer).decode()
-            if not data:
-                print('\33[31m\33[1m \rDISCONNECTED!!\n \33[0m')
-                sys.exit()
-            else:
-                sys.stdout.write(data)
-                display()
-
-        # user entered a message (send data)
-        else:
-            display()
-
-            data_transferred = q.get()
-            print(data_transferred)
-
-            data_to_send = data_transferred  # The data to send to the server.
-            data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
-
-            # Send the data - (list).
-            s.send(data_to_send)
-            # write here all the repeat code (all the input of the program)
-    # time.sleep(5)
-    """

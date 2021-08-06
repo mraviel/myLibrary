@@ -66,8 +66,9 @@ WindowManager:
                 bold: True
                 background_color: '#ee5146'
                 on_press:
-                    app.root.current = "wish_list_screen"
-                    root.manager.transition.direction = "down"
+                    a = root.login()
+                    if a is not None and a: app.root.current = "wish_list_screen"
+                    if a is not None and a: root.manager.transition.direction = "down"
 
 
 <SignupWindow>:

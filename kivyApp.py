@@ -27,10 +27,31 @@ LabelBase.register(name="Arial", fn_regular=path.join(fonts_path, "arial.ttf"))
 
 class LoginWindow(Screen):
     username = ObjectProperty(None)
+    password = ObjectProperty(None)
     labelName = ObjectProperty(None)
     
     def callback(self):
         self.labelName.text = "Hello " + self.username.text + "!"
+
+    def login(self):
+        """ Login function, [1] == Login. """
+        data_to_transfer = [1]
+        d = {}
+        if self.username.text != "" and self.password != "":
+            d['USERNAME'] = self.username.text
+            d['PASSWORD'] = self.password.text
+            data_to_transfer.append(d)
+        else:
+            return None
+
+        q.put(data_to_transfer)
+        return self.isLogin()
+
+    def isLogin(self):
+        """ Get the info from the client, and check if account is found. """
+
+        isFound = q1.get()  # Get if the account is in the system.
+        return isFound
 
 
 class SignupWindow(Screen):
@@ -40,6 +61,7 @@ class SignupWindow(Screen):
     confirm_password = ObjectProperty(None)
 
     def signup(self):
+        """ Signup function, [2] == Signup. """
         data_to_transfer = [2]
         d = {}
         if self.password.text == self.confirm_password.text and self.username.text != "" and self.email.text != "":
@@ -75,9 +97,10 @@ class LibraryApp(App):
 
 if __name__ == "__main__":
     q = Queue()  # Use to transfer data between the main thread and the others.
+    q1 = Queue()
 
     # Start new thread for the network connection.
-    x = threading.Thread(target=main, args=(q,))
+    x = threading.Thread(target=main, args=(q, q1, ))
     x.start()
 
     # Run the kivy application.

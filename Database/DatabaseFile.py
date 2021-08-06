@@ -63,5 +63,7 @@ class Database:
         find_user = ''' SELECT * FROM USERS WHERE USERNAME="{0}" AND PASSWORD="{1}"; '''.format(user[0], user[1])
         if self.cur.execute(find_user).fetchone():
             print("FOUND")
+            return True
         else:
             print("NOT FOUND")
+            return False

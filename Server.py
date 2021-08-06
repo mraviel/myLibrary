@@ -5,12 +5,23 @@ import select
 from Database.DatabaseFile import Database
 
 
+def send_to_all(sock, message):
+
+    # Message not forwarded to server and sender itself
+    try:
+        sock.send(message)
+    except:
+        # if connection not available
+        sock.close()
+        connected_list.remove(sock)
+
+
 if __name__ == "__main__":
 
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5021
+    port = 5025
 
     database = Database()
 
@@ -35,23 +46,8 @@ if __name__ == "__main__":
                 sockfd, addr = server_socket.accept()
 
                 print("GOOD")
-                """
-                # Recv list. Ex: [2, {dictionary}]
-                data_recv = sockfd.recv(4096)
-                try:
-                    data_recv = pickle.loads(data_recv)
-                except EOFError:
-                    continue
-                print(data_recv)
 
-                a = [tuple(data_recv[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data_recv[1]][0]  # (USERNAME, PASSWORD)
-                if data_recv[0] == 1:
-                    database.login(a)
-                elif data_recv[0] == 2:
-                    database.add_user_signup(a)
-                else:
-                    pass
-                """
+                # Recv list. Ex: [2, {dictionary}]
                 connected_list.append(sockfd)
 
             # Some incoming message from a client
@@ -83,10 +79,13 @@ if __name__ == "__main__":
                         print(data)  # Write the data on the screen.
 
                         # Insert the data into the database.
-                        a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
                         if data[0] == 1:
-                            database.login(a)
+                            a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
+                            found = database.login(a)
+                            send_to_all(sock, str(found).encode())
+                            name = a[0]
                         elif data[0] == 2:
+                            a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
                             database.add_user_signup(a)
                         else:
                             pass
@@ -98,5 +97,6 @@ if __name__ == "__main__":
                     connected_list.remove(sock)
                     sock.close()
                     continue
+
 
     # server_socket.close()
