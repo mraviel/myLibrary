@@ -1,6 +1,14 @@
+from kivy import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '600')
+Config.set('graphics', 'minimum_width', '800')
+Config.set('graphics', 'minimum_height', '600')
+Config.set('graphics', 'resizable', False)
+
 import kivy
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.image import AsyncImage
@@ -15,6 +23,8 @@ from os import path
 import threading
 from queue import Queue
 from Client import *
+from kivy.core.window import Window
+from kvStyle.myWidgets import AsyncImageButton
 
 
 fonts_path = path.abspath("fonts")
@@ -78,7 +88,34 @@ class SignupWindow(Screen):
 
 
 class WishListWindow(Screen):
-    pass
+    width1, height1 = Window.size
+
+    def __init__(self, **kwargs):
+        super(WishListWindow, self).__init__(**kwargs)
+
+        scroll = ScrollView(size_hint_y=.73,
+                            pos_hint={"center_x": 0.5, "center_y": 0.2},
+                            do_scroll_x=False,
+                            do_scroll_y=True)
+
+        self.layout = GridLayout(size=(self.width1, self.height1),
+                                 size_hint_x=1,
+                                 size_hint_y=5,
+                                 cols=int(self.width / 100 * 5),
+                                 height=Window.minimum_height,
+                                 row_default_height=180,
+                                 row_force_default=True)
+
+        for i in range(10):
+            a = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
+            self.layout.add_widget(a)
+
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+    def add_new_book(self):
+        a = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
+        self.layout.add_widget(a)
 
 
 class BooksReadWindow(Screen):

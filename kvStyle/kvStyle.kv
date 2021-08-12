@@ -168,6 +168,9 @@ WindowManager:
             font_name: "Arial"
         Button:
             text: "Add New Book"
+            on_press:
+                a = root.add_new_book()
+
         Button:
             background_color: '#ee5146'
             text: "Books I Read"
@@ -176,65 +179,6 @@ WindowManager:
                 app.root.current = "books_read_screen"
                 root.manager.transition.direction: "top"
 
-
-    ScrollView:
-        size_hint_y: .73
-        pos_hint: {"center_x": 0.5, "center_y": 0.2}
-        do_scroll_x: False
-        do_scroll_y: True
-
-        GridLayout:
-            size: (root.width, root.height)
-            size_hint_x: None
-            size_hint_y: 5
-            cols: int(self.width / 100)
-            height: self.minimum_height
-            row_default_height: 180
-            row_force_default: True
-
-            Button:
-                text: "Book"
-                AsyncImage:
-                    source:"https://simania.co.il/bookimages/covers93/938683.jpg"
-                    center_x: self.parent.center_x
-                    center_y: self.parent.center_y
-                    allow_stretch: True
-                    size: 180, 180
-
-            Button:
-                text: "Book"
-                AsyncImage:
-                    source:"https://simania.co.il/bookimages/covers100/1001256.jpg"
-                    center_x: self.parent.center_x
-                    center_y: self.parent.center_y
-                    allow_stretch: True
-                    size: 180, 180
-
-            Button:
-                text: "Book"
-                AsyncImage:
-                    source:"https://simania.co.il/bookimages/covers99/999910.jpg"
-                    center_x: self.parent.center_x
-                    center_y: self.parent.center_y
-                    allow_stretch: True
-                    size: 180, 180
-
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers100/1001257.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers96/965408.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers2/24590.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers96/967085.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers97/977547.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers97/974873.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers100/1001257.jpg"
-            AsyncImage:
-                source:"https://simania.co.il/bookimages/covers2/24590.jpg"
 
 <BooksReadWindow>:
     name: "books_read_screen"
