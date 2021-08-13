@@ -28,21 +28,21 @@ class Database:
             self.cur.execute('''CREATE TABLE Users (UserID int NOT NULL PRIMARY KEY,
                                                     USERNAME varchar(255) NOT NULL UNIQUE CHECK(LENGTH(USERNAME)<=30),
                                                     PASSWORD varchar(255) NOT NULL,
-                                                    EMAIl varchar(255) NOT NULL UNIQUE)''')
+                                                    EMAIl varchar(255) NOT NULL UNIQUE);''')
 
             self.cur.execute('''CREATE TABLE Books (BookID int NOT NULL PRIMARY KEY,
                                                     Name varchar(255) NOT NULL UNIQUE,
                                                     Author varchar(255) NOT NULL,
-                                                    Description TEXT,
-                                                    Image varchar(255)''')
+                                                    Description Text(255),
+                                                    Image varchar(255));''')
 
             self.cur.execute('''CREATE TABLE WishList (ID int NOT NULL PRIMARY KEY,
-                                                           UserID int NOT NULL FOREIGN KEY,
-                                                           BookID int NOT NULL FOREIGN KEY)''')
+                                                       UserID int NOT NULL REFERENCES Users(UserID),
+                                                       BookID int NOT NULL REFERENCES Books(BookID));''')
 
             self.cur.execute('''CREATE TABLE BooksRead (ID int NOT NULL PRIMARY KEY,
-                                                           UserID int NOT NULL FOREIGN KEY,
-                                                           BookID int NOT NULL FOREIGN KEY)''')
+                                                        UserID int NOT NULL REFERENCES Users(UserID),
+                                                        BookID int NOT NULL REFERENCES Books(BookID));''')
 
         except sqlite3.OperationalError as e:
             print("Table already exits ", e)
@@ -81,3 +81,16 @@ class Database:
         else:
             print("NOT FOUND")
             return False
+
+    def all_wish_list_books(self, user):
+        """ Func that return list of all WishList books.
+        Return: [(), (), ()] """
+
+        all_books = "SELECT WishList.ID, Users.USERNAME, Books.name, Books.Author, Books.Description, Books.Image " \
+                    "FROM WishList " \
+                    "INNER JOIN Users ON WishList.UserID=Users.UserID " \
+                    "INNER JOIN Books ON WishList.BookID=Books.BookID " \
+                    "WHERE Users.USERNAME='{0}' " \
+                    "ORDER BY WishList.ID;".format(user[0])
+
+        return self.cur.execute(all_books).fetchall()

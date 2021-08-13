@@ -38,7 +38,7 @@ def main(q, q1):
     else:
         host = sys.argv[1]
 
-    port = 5025
+    port = 5027
     buffer = 4096
     data_to_send = []
 
