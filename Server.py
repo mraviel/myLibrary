@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5027
+    port = 5028
 
     database = Database()
 
@@ -84,6 +84,13 @@ if __name__ == "__main__":
                             found = database.login(a)
                             send_to_all(sock, str(found).encode())
                             name = a[0]
+
+                            # Send the wish list books to show in the app.
+                            if found:
+                                print(database.all_wish_list_books(a))
+                                wish_list_send = pickle.dumps(database.all_wish_list_books(a))
+                                send_to_all(sock, wish_list_send)
+
                         elif data[0] == 2:
                             a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
                             database.add_user_signup(a)
