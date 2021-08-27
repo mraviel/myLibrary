@@ -3,6 +3,7 @@ import socket
 import sys
 import select
 from Database.DatabaseFile import Database
+from Bot import bot
 
 
 def send_to_all(sock, message):
