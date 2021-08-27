@@ -1,6 +1,14 @@
+from kivy import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '600')
+Config.set('graphics', 'minimum_width', '800')
+Config.set('graphics', 'minimum_height', '600')
+Config.set('graphics', 'resizable', False)
+
 import kivy
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.image import AsyncImage
@@ -15,6 +23,8 @@ from os import path
 import threading
 from queue import Queue
 from Client import *
+from kivy.core.window import Window
+from kvStyle.myWidgets import AsyncImageButton
 
 
 fonts_path = path.abspath("fonts")
@@ -29,7 +39,7 @@ class LoginWindow(Screen):
     username = ObjectProperty(None)
     password = ObjectProperty(None)
     labelName = ObjectProperty(None)
-    
+
     def callback(self):
         self.labelName.text = "Hello " + self.username.text + "!"
 
@@ -48,10 +58,19 @@ class LoginWindow(Screen):
         return self.isLogin()
 
     def isLogin(self):
-        """ Get the info from the client, and check if account is found. """
-
+        """ Get the info from the client, and check if account is found,
+            Add the books form the database. """
         isFound = q1.get()  # Get if the account is in the system.
+        if isFound:
+            self.update_wish_list_window()
         return isFound
+
+    def update_wish_list_window(self):
+        """ Show all the wish-list books for the account. """
+        my_books = q2.get()
+        for book in my_books:
+            image = AsyncImageButton(source=book[5])  # book[5] == 'img.png'
+            self.manager.ids.wish_list_window.ids.grid.add_widget(image)  # Show the image on the grid
 
 
 class SignupWindow(Screen):
@@ -73,12 +92,50 @@ class SignupWindow(Screen):
         else:
             return None
 
-        q.put(data_to_transfer)  # Write to the Queue the data to have in the main function.
+        # Write to the Queue the data to have in the main function.
+        q.put(data_to_transfer)
+
         return data_to_transfer
 
 
 class WishListWindow(Screen):
-    pass
+    width1, height1 = Window.size
+
+    def __init__(self, **kwargs):
+        super(WishListWindow, self).__init__(**kwargs)
+
+        scroll = ScrollView(size_hint_y=.73,
+                            pos_hint={"center_x": 0.5, "center_y": 0.2},
+                            do_scroll_x=False,
+                            do_scroll_y=True)
+
+        self.layout = GridLayout(size=(self.width1, self.height1),
+                                 size_hint_x=1,
+                                 size_hint_y=5,
+                                 cols=int(self.width / 100 * 5),
+                                 height=Window.minimum_height,
+                                 row_default_height=180,
+                                 row_force_default=True)
+
+        self.ids['grid'] = self.layout  # Set the id for the main GridLayout.
+
+        # Add layout to ScrollView.
+        scroll.add_widget(self.layout)
+
+        # Add ScrollView to window.
+        self.add_widget(scroll)
+
+    def add_new_book(self):
+        """ Add new book to Database and add it to the screen. """
+        image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
+        self.layout.add_widget(image)
+
+    def show_books(self):
+        """ NOT USED FUNCTION """
+        # Add the books to show on screen.
+        for i in range(10):
+            image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
+            self.layout.add_widget(image)
 
 
 class BooksReadWindow(Screen):
@@ -96,11 +153,14 @@ class LibraryApp(App):
 
 
 if __name__ == "__main__":
-    q = Queue()  # Use to transfer data between the main thread and the others.
-    q1 = Queue()
+
+    # Use to transfer data between the main thread and the others.
+    q = Queue()  # data_to_transfer -> [1\2, ()]
+    q1 = Queue()  # isFound -> True / Flase
+    q2 = Queue()  # wish_list_book -> [(), ()]
 
     # Start new thread for the network connection.
-    x = threading.Thread(target=main, args=(q, q1, ))
+    x = threading.Thread(target=main, args=(q, q1, q2, ))
     x.start()
 
     # Run the kivy application.
