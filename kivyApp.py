@@ -100,6 +100,7 @@ class SignupWindow(Screen):
 
 class WishListWindow(Screen):
     width1, height1 = Window.size
+    bookNameText = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super(WishListWindow, self).__init__(**kwargs)
@@ -126,7 +127,9 @@ class WishListWindow(Screen):
         self.add_widget(scroll)
 
     def add_new_book(self):
-        """ Add new book to Database and add it to the screen. """
+        """ Add new book to Database and add it to the screen, [3] == NewBook"""
+        q.put([3, [self.bookNameText.text]])
+
         image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
         self.layout.add_widget(image)
 

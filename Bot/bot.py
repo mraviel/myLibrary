@@ -9,17 +9,14 @@ from os import path
 """ Bot to find the book details,
     From --> 'https://simania.co.il'. """
 
+# Path to chrome driver.
+PATH = path.abspath('chromedriver')
 
-def find_book(book):
 
-    l = []
-    book_name, author, summary, image = "", "", "", ""
+def find_book(book, driver_path=PATH):
 
-    # Path to chrome driver that I download
-    PATH = path.abspath('chromedriver')
-    driver = webdriver.Chrome(PATH)
-
-    driver.get("https://simania.co.il")
+    driver = webdriver.Chrome(driver_path)  # driver.
+    driver.get("https://simania.co.il")  # Enter the website.
 
     search = driver.find_element_by_id("query")
     search.send_keys(book)
@@ -47,23 +44,22 @@ def find_book(book):
 
         except:
             # If books does not appear
+            driver.quit()
             print("The book does not exists")
             return None
 
     try:
-        l.append(book_name.text)
-        l.append(author.text)
-        l.append(summary.text)
-        l.append(image.get_attribute('src'))
+        book_details = [book_name.text, author.text, summary.text, image.get_attribute('src')]
 
-        return l  # [book_name, author, summary, image]
+        driver.quit()
+        return book_details
+
     except NameError or AttributeError:
+        driver.quit()
         return None
-
-    # driver.quit()
 
 
 if __name__ == "__main__":
-    l = find_book("השנאה שנתתם")
-    for i in l:
+    book_detail = find_book("השנאה שנתתם")
+    for i in book_detail:
         print(i)

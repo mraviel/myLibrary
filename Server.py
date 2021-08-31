@@ -4,6 +4,8 @@ import sys
 import select
 from Database.DatabaseFile import Database
 from Bot import bot
+import threading
+from os import path
 
 
 def send_to_all(sock, message):
@@ -17,12 +19,33 @@ def send_to_all(sock, message):
         connected_list.remove(sock)
 
 
+# Find the chromedriver.
+Bot_path = path.abspath("Bot")
+driver_path = path.join(Bot_path, "chromedriver")
+
+
+def bot_thread(book_name):
+    def bot_activate(book=book_name):
+        print("Looking for the book...")
+        book_details = bot.find_book(book, driver_path)
+
+        if book_details is None:
+            pass
+        else:
+            for i in book_details:
+                print(i)
+
+        return book_details
+    x = threading.Thread(target=bot_activate, args=(book_name, ))
+    x.start()
+
+
 if __name__ == "__main__":
 
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5028
+    port = 5022
 
     database = Database()
 
@@ -95,6 +118,10 @@ if __name__ == "__main__":
                         elif data[0] == 2:
                             a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
                             database.add_user_signup(a)
+
+                        elif data[0] == 3:
+                            # print(data[1][0])
+                            bot_thread(data[1][0])
                         else:
                             pass
 

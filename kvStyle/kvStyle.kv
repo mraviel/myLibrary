@@ -152,6 +152,7 @@ WindowManager:
 
 <WishListWindow>:
     name: "wish_list_screen"
+    bookNameText: bookNameText
 
     Label:
         text: "Wish I Could Read..."
@@ -165,6 +166,7 @@ WindowManager:
         size_hint: (1, 0.1)
         pos_hint: {"center_x": 0.5, "center_y": 0.9}
         TextInput:
+            id: bookNameText
             multiline: False
             font_name: "Arial"
         Button:
