@@ -24,28 +24,45 @@ Bot_path = path.abspath("Bot")
 driver_path = path.join(Bot_path, "chromedriver")
 
 
+def bot_activate(book, usename):
+    database = Database()
+    print("Looking for the book...")
+    book_details = bot.find_book(book, driver_path)
+
+    if book_details is None:
+        pass
+    else:
+        database.add_new_book(book_details)
+        database.add_book_to_wishlist(book_details, username)
+
+    # send_to_all(sock, book_details)
+
+    return book_details
+
+
+"""
 def bot_thread(book_name):
     def bot_activate(book=book_name):
+        database = Database()
         print("Looking for the book...")
         book_details = bot.find_book(book, driver_path)
 
         if book_details is None:
             pass
         else:
-            for i in book_details:
-                print(i)
+            database.add_new_book(book_details)
 
         return book_details
     x = threading.Thread(target=bot_activate, args=(book_name, ))
     x.start()
-
+"""
 
 if __name__ == "__main__":
 
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5022
+    port = 5031
 
     database = Database()
 
@@ -120,8 +137,13 @@ if __name__ == "__main__":
                             database.add_user_signup(a)
 
                         elif data[0] == 3:
-                            # print(data[1][0])
-                            bot_thread(data[1][0])
+                            book_name = data[1][0]
+                            username = data[1][1]
+
+                            x = threading.Thread(target=bot_activate, args=(book_name, username, ))
+                            x.start()
+                            # bot_thread(books_name)
+
                         else:
                             pass
 

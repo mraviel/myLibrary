@@ -128,7 +128,8 @@ class WishListWindow(Screen):
 
     def add_new_book(self):
         """ Add new book to Database and add it to the screen, [3] == NewBook"""
-        q.put([3, [self.bookNameText.text]])
+        username = self.manager.ids.login_window.ids.username.text
+        q.put([3, [self.bookNameText.text, username]])
 
         image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
         self.layout.add_widget(image)
