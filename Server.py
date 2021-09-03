@@ -12,7 +12,7 @@ def send_to_all(sock, message):
 
     # Message not forwarded to server and sender itself
     try:
-        sock.send(message)
+        sock.sendall(message)
     except:
         # if connection not available
         sock.close()

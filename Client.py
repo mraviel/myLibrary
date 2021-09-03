@@ -64,8 +64,15 @@ def main(q, q1, q2):
             print(isFound)
 
             if isFound:
+                wish_list_books = b''
                 # Recv the wish list books for the new window.
-                wish_list_books = s.recv(buffer)
+                while True:
+                    # Recv all data.
+                    data_recv = s.recv(buffer)
+                    wish_list_books += data_recv
+                    if len(data_recv) < buffer:
+                        break
+
                 wish_list_books = pickle.loads(wish_list_books)
                 q2.put(wish_list_books)  # --> Transact the list to the kivy app (another thread).
 
