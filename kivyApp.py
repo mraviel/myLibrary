@@ -70,7 +70,7 @@ class LoginWindow(Screen):
         my_books = q2.get()
         for book in my_books:
             image = AsyncImageButton(source=book[5])  # book[5] == 'img.png'
-            self.manager.ids.wish_list_window.ids.grid.add_widget(image)  # Show the image on the grid
+            self.manager.ids.wish_list_window.ids.grid.add_widget(image)  # Show the image on the grid.
 
 
 class SignupWindow(Screen):
@@ -88,7 +88,6 @@ class SignupWindow(Screen):
             d['EMAIL'] = self.email.text
             d['PASSWORD'] = self.password.text
             data_to_transfer.append(d)
-            print(data_to_transfer)
         else:
             return None
 
@@ -159,7 +158,7 @@ class LibraryApp(App):
 if __name__ == "__main__":
 
     # Use to transfer data between the main thread and the others.
-    q = Queue()  # data_to_transfer -> [1\2, ()]
+    q = Queue()  # data_to_transfer -> [1\2\3, {}]
     q1 = Queue()  # isFound -> True / Flase
     q2 = Queue()  # wish_list_book -> [(), ()]
 

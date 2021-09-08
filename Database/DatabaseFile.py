@@ -56,8 +56,8 @@ class Database:
             i = self.cur.execute(order)
             count_id = i.fetchall()[0][0] + 1
 
-        except sqlite3.IntegrityError and IndexError:
-            print("BIG PROBLEM...")
+        except sqlite3.IntegrityError and IndexError as e:
+            print(str(e))
 
         return count_id
 
@@ -83,10 +83,8 @@ class Database:
         """ Log user to the database """
         find_user = ''' SELECT * FROM Users WHERE USERNAME="{0}" AND PASSWORD="{1}"; '''.format(user[0], user[1])
         if self.cur.execute(find_user).fetchone():
-            print("FOUND")
             return True
         else:
-            print("NOT FOUND")
             return False
 
     def all_wish_list_books(self, user):

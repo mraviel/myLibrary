@@ -26,7 +26,7 @@ driver_path = path.join(Bot_path, "chromedriver")
 
 def bot_activate(book, usename):
     database = Database()
-    print("Looking for the book...")
+    print("Client ({0}, {1}) ({2}) Looking for book...".format(addr[0], addr[1], username))
     book_details = bot.find_book(book, driver_path)
 
     if book_details is None:
@@ -35,40 +35,21 @@ def bot_activate(book, usename):
         database.add_new_book(book_details)
         database.add_book_to_wishlist(book_details, username)
 
-    # send_to_all(sock, book_details)
-
     return book_details
 
-
-"""
-def bot_thread(book_name):
-    def bot_activate(book=book_name):
-        database = Database()
-        print("Looking for the book...")
-        book_details = bot.find_book(book, driver_path)
-
-        if book_details is None:
-            pass
-        else:
-            database.add_new_book(book_details)
-
-        return book_details
-    x = threading.Thread(target=bot_activate, args=(book_name, ))
-    x.start()
-"""
 
 if __name__ == "__main__":
 
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5031
+    port = 5038
 
     database = Database()
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    server_socket.bind(("localhost", port))
+    server_socket.bind(("0.0.0.0", port))
     server_socket.listen(10)  # Listen at most 10 connection at one time
 
     # Add server socket to the list of readable connections
@@ -86,7 +67,7 @@ if __name__ == "__main__":
                 # Handle the case in which there is a new connection recieved through server_socket
                 sockfd, addr = server_socket.accept()
 
-                print("GOOD")
+                print("Client ({0}, {1}) is Online".format(addr[0], addr[1]))
 
                 # Recv list. Ex: [2, {dictionary}]
                 connected_list.append(sockfd)
@@ -96,7 +77,7 @@ if __name__ == "__main__":
 
                 # Data from client
                 try:
-                    # Handle all the recv code
+                    # Handle all recv data
 
                     data1 = sock.recv(buffer)
                     try:
@@ -104,9 +85,6 @@ if __name__ == "__main__":
                     except EOFError:
                         continue
                     data = data1
-                    # print "sock is: ",sock
-                    # data = data1[:data1.index("\n")]
-                    # print "\n data received: ",data
 
                     # get addr of client sending the message
                     (i, p) = sock.getpeername()
@@ -117,24 +95,26 @@ if __name__ == "__main__":
                         continue
                     else:
                         # What to do with the data recv?
-                        print(data)  # Write the data on the screen.
+                        # print(data)
 
                         # Insert the data into the database.
                         if data[0] == 1:
-                            a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
-                            found = database.login(a)
+                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data[1]][0]  # (USERNAME, PASSWORD)
+                            found = database.login(user)
                             send_to_all(sock, str(found).encode())
-                            name = a[0]
+                            name = user[0]
 
                             # Send the wish list books to show in the app.
                             if found:
-                                print(database.all_wish_list_books(a))
-                                wish_list_send = pickle.dumps(database.all_wish_list_books(a))
+                                print("Client ({0}, {1}) Login Successfully ({2})".format(addr[0], addr[1], name))
+                                wish_list_send = pickle.dumps(database.all_wish_list_books(user))
                                 send_to_all(sock, wish_list_send)
+                            else:
+                                print("Client ({0}, {1}) Login Failed".format(addr[0], addr[1]))
 
                         elif data[0] == 2:
-                            a = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
-                            database.add_user_signup(a)
+                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
+                            database.add_user_signup(user)
 
                         elif data[0] == 3:
                             book_name = data[1][0]
@@ -142,7 +122,6 @@ if __name__ == "__main__":
 
                             x = threading.Thread(target=bot_activate, args=(book_name, username, ))
                             x.start()
-                            # bot_thread(books_name)
 
                         else:
                             pass

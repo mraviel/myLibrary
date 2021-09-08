@@ -1,3 +1,4 @@
+import queue
 import socket
 import select
 import sys
@@ -21,7 +22,7 @@ def main(q, q1, q2):
     else:
         host = sys.argv[1]
 
-    port = 5031
+    port = 5038
     buffer = 4096
     data_to_send = []
 
@@ -43,38 +44,36 @@ def main(q, q1, q2):
 
         display()
 
-        # The data transfer from the kivyApp - Main thread.
+        # Data from kivy app.
         data_transferred = q.get()
-        print(data_transferred)
 
-        data_to_send = data_transferred  # The data to send to the server.
-        data_to_send = pickle.dumps(data_to_send)  # Change the format to be able to send via network.
+        data_to_send = pickle.dumps(data_transferred)  # Change to binary.
 
-        # Send the data - (list).
+        # Send to server - (list).
         s.send(data_to_send)
 
-        # If log in than recv from the server if the server found the account.
+        # Login
         if data_transferred[0] == 1:
-            # print("Try Log In")
-            isFound = s.recv(buffer)  # Recv from server if found.
+            isFound = s.recv(buffer)  # Recv if found.
             s.settimeout(2)
 
-            isFound = eval(isFound.decode())  # --> True / False
-            q1.put(isFound)  # Transact the info to the kivy app (another thread).
+            # Send data to kivy app.
             print(isFound)
+            isFound = eval(isFound.decode())  # True / False
+            q1.put(isFound)
 
+            # Recv all books in WishList.
             if isFound:
                 wish_list_books = b''
-                # Recv the wish list books for the new window.
                 while True:
-                    # Recv all data.
                     data_recv = s.recv(buffer)
                     wish_list_books += data_recv
                     if len(data_recv) < buffer:
                         break
 
+                # Send data to kivy app. [(), (), ...]
                 wish_list_books = pickle.loads(wish_list_books)
-                q2.put(wish_list_books)  # --> Transact the list to the kivy app (another thread).
+                q2.put(wish_list_books)
 
 
 if __name__ == "__main__":
