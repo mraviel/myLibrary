@@ -24,9 +24,9 @@ Bot_path = path.abspath("Bot")
 driver_path = path.join(Bot_path, "chromedriver")
 
 
-def bot_activate(book, usename):
+def bot_activate(book, username):
     database = Database()
-    print("Client ({0}, {1}) ({2}) Looking for book...".format(addr[0], addr[1], username))
+    print("Client ({0}) ({1}) Looking for book...".format((i, p), username))
     book_details = bot.find_book(book, driver_path)
 
     if book_details is None:
@@ -34,6 +34,9 @@ def bot_activate(book, usename):
     else:
         database.add_new_book(book_details)
         database.add_book_to_wishlist(book_details, username)
+
+    print("Sending to:   " + str((i, p)))
+    send_to_all(sock, pickle.dumps(book_details))
 
     return book_details
 
@@ -43,7 +46,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5038
+    port = 5040
 
     database = Database()
 
@@ -106,11 +109,11 @@ if __name__ == "__main__":
 
                             # Send the wish list books to show in the app.
                             if found:
-                                print("Client ({0}, {1}) Login Successfully ({2})".format(addr[0], addr[1], name))
+                                print("Client ({0}) Login Successfully ({1})".format((i, p), name))
                                 wish_list_send = pickle.dumps(database.all_wish_list_books(user))
                                 send_to_all(sock, wish_list_send)
                             else:
-                                print("Client ({0}, {1}) Login Failed".format(addr[0], addr[1]))
+                                print("Client ({0}) Login Failed".format((i, p)))
 
                         elif data[0] == 2:
                             user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
@@ -133,6 +136,5 @@ if __name__ == "__main__":
                     connected_list.remove(sock)
                     sock.close()
                     continue
-
 
     # server_socket.close()

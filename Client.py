@@ -14,7 +14,7 @@ def display():
     sys.stdout.flush()
 
 
-def main(q, q1, q2):
+def main(q, q1, q2, q3):
 
     # Can log to ip via command line argument
     if len(sys.argv) < 2:
@@ -22,7 +22,7 @@ def main(q, q1, q2):
     else:
         host = sys.argv[1]
 
-    port = 5038
+    port = 5040
     buffer = 4096
     data_to_send = []
 
@@ -40,12 +40,24 @@ def main(q, q1, q2):
         socket_list = [sys.stdin, s]
 
         # Get the list of sockets which are readable
-        rList, wList, error_list = select.select(socket_list, [], [], 0)
+        rList, wList, error_list = select.select(socket_list, [], [], 1)
+
+        print(rList)
+        for sock in rList:
+            if sock == s:
+                print("Data accepted")
+                data = s.recv(buffer)
+                q3.put(pickle.loads(data))
+            else:
+                pass
 
         display()
 
         # Data from kivy app.
-        data_transferred = q.get()
+        try:
+            data_transferred = q.get_nowait()
+        except queue.Empty:
+            data_transferred = [0, []]
 
         data_to_send = pickle.dumps(data_transferred)  # Change to binary.
 

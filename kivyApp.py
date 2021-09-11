@@ -130,15 +130,20 @@ class WishListWindow(Screen):
         username = self.manager.ids.login_window.ids.username.text
         q.put([3, [self.bookNameText.text, username]])
 
-        image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
-        self.layout.add_widget(image)
+        # Handle the book_details to show up.
+        def pop_book():
+            book_details = q3.get()
+            if book_details is None:
+                pass
+            else:
+                image = AsyncImageButton(source=book_details[3])
+                self.layout.add_widget(image)
 
-    def show_books(self):
-        """ NOT USED FUNCTION """
-        # Add the books to show on screen.
-        for i in range(10):
-            image = AsyncImageButton(source="https://simania.co.il/bookimages/covers100/1001256.jpg")
-            self.layout.add_widget(image)
+        pop_book()
+
+        # I would prefer to use thread to prevent the program to wait for data to be accepted.
+        # pop_book_thread = threading.Thread(target=pop_book, args=())
+        # pop_book_thread.start()
 
 
 class BooksReadWindow(Screen):
@@ -161,9 +166,10 @@ if __name__ == "__main__":
     q = Queue()  # data_to_transfer -> [1\2\3, {}]
     q1 = Queue()  # isFound -> True / Flase
     q2 = Queue()  # wish_list_book -> [(), ()]
+    q3 = Queue()  # book_details  --> [name, author, summary, image]
 
     # Start new thread for the network connection.
-    x = threading.Thread(target=main, args=(q, q1, q2, ))
+    x = threading.Thread(target=main, args=(q, q1, q2, q3, ))
     x.start()
 
     # Run the kivy application.
