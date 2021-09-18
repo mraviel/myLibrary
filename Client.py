@@ -5,6 +5,7 @@ import sys
 import pickle
 from queue import Queue
 import time
+import threading
 
 
 # Helper function (formatting)
@@ -22,7 +23,7 @@ def main(q, q1, q2, q3):
     else:
         host = sys.argv[1]
 
-    port = 5040
+    port = 5042
     buffer = 4096
     data_to_send = []
 

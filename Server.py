@@ -6,6 +6,7 @@ from Database.DatabaseFile import Database
 from Bot import bot
 import threading
 from os import path
+from queue import Queue
 
 
 def send_to_all(sock, message):
@@ -24,21 +25,28 @@ Bot_path = path.abspath("Bot")
 driver_path = path.join(Bot_path, "chromedriver")
 
 
-def bot_activate(book, username):
+def bot_activate(book_name, user_name, sock_d):
     database = Database()
-    print("Client ({0}) ({1}) Looking for book...".format((i, p), username))
-    book_details = bot.find_book(book, driver_path)
 
-    if book_details is None:
-        pass
-    else:
-        database.add_new_book(book_details)
-        database.add_book_to_wishlist(book_details, username)
+    while True:
+        # Block until get info.
+        book = book_name.get()
+        username = user_name.get()
+        sockd = sock_d.get()
+        (i, p) = sockd.getpeername()
 
-    print("Sending to:   " + str((i, p)))
-    send_to_all(sock, pickle.dumps(book_details))
+        print("Client ({0}) ({1}) Looking for book...".format((i, p), username))
 
-    return book_details
+        book_details = bot.find_book(book, driver_path)
+
+        if book_details is None:
+            pass
+        else:
+            database.add_new_book(book_details)
+            database.add_book_to_wishlist(book_details, username)
+
+        print("Client ({0}) ({1}) Send Info".format((i, p), username))
+        send_to_all(sockd, pickle.dumps(book_details))
 
 
 if __name__ == "__main__":
@@ -46,7 +54,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5040
+    port = 5042
 
     database = Database()
 
@@ -61,6 +69,11 @@ if __name__ == "__main__":
     print("\33[32m \t\t\t\tSERVER WORKING \33[0m")
     name = ""
 
+    # Queue's for bot thread.
+    book_name_q = Queue()
+    username_q = Queue()
+    sock_q = Queue()
+
     while 1:
         # Get the list sockets which are ready to be read through select
         rList, wList, error_sockets = select.select(connected_list, [], [])
@@ -74,6 +87,10 @@ if __name__ == "__main__":
 
                 # Recv list. Ex: [2, {dictionary}]
                 connected_list.append(sockfd)
+
+                # Bot thread, each client has it's own thread.
+                x = threading.Thread(target=bot_activate, args=(book_name_q, username_q, sock_q, ))
+                x.start()
 
             # Some incoming message from a client
             else:
@@ -120,11 +137,10 @@ if __name__ == "__main__":
                             database.add_user_signup(user)
 
                         elif data[0] == 3:
-                            book_name = data[1][0]
-                            username = data[1][1]
-
-                            x = threading.Thread(target=bot_activate, args=(book_name, username, ))
-                            x.start()
+                            # Put the values for the Thread.
+                            book_name_q.put(data[1][0])
+                            username_q.put(data[1][1])
+                            sock_q.put(sock)
 
                         else:
                             pass

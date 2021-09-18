@@ -136,14 +136,13 @@ class WishListWindow(Screen):
             if book_details is None:
                 pass
             else:
+                print("print on screen... ")
                 image = AsyncImageButton(source=book_details[3])
                 self.layout.add_widget(image)
 
-        pop_book()
-
-        # I would prefer to use thread to prevent the program to wait for data to be accepted.
-        # pop_book_thread = threading.Thread(target=pop_book, args=())
-        # pop_book_thread.start()
+        # Thread that get info and print to screen.
+        pop_book_thread = threading.Thread(target=pop_book, args=(), daemon=True)
+        pop_book_thread.start()
 
 
 class BooksReadWindow(Screen):
@@ -169,7 +168,7 @@ if __name__ == "__main__":
     q3 = Queue()  # book_details  --> [name, author, summary, image]
 
     # Start new thread for the network connection.
-    x = threading.Thread(target=main, args=(q, q1, q2, q3, ))
+    x = threading.Thread(target=main, args=(q, q1, q2, q3, ), daemon=True)
     x.start()
 
     # Run the kivy application.
