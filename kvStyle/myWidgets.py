@@ -22,3 +22,14 @@ class AsyncImageButton(ButtonBehavior, AsyncImage):
     def on_release(self):
         print("on_release")
         self.color = (1, 1, 1, 1)
+
+
+class Book(AsyncImageButton):
+
+    """ Class that represent book. """
+
+    def __init__(self, book_details):
+        self.book_details = book_details
+        self.book_name, self.author, self.summary, self.image = self.book_details
+
+        super(Book, self).__init__(self.image)

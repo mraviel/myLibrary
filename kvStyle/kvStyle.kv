@@ -5,6 +5,8 @@ WindowManager:
     WishListWindow:
         id: wish_list_window
     BooksReadWindow:
+    BookWindow:
+        id: book_window
 
 <LoginWindow>:
     name: "login_screen"
@@ -171,6 +173,8 @@ WindowManager:
             multiline: False
             font_name: "Arial"
         Button:
+            background_color: '#ee5146'
+            font_size: self.width / 10
             text: "Add New Book"
             on_press:
                 a = root.add_new_book()
@@ -189,3 +193,37 @@ WindowManager:
 
     Button:
         text: "Books i read!"
+
+<BookWindow>
+    name: "book_screen"
+
+    Label:
+        text: "Book Page"
+        font_size: self.width / 10
+        font_name: "Arial"
+        pos_hint: {"center_x": 0.5, "center_y": 0.7}
+
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1, 0.1)
+        pos_hint: {"center_x": 0.5, "center_y": 0.9}
+
+        Button:
+            background_color: '#ee5146'
+            text: "I Read this"
+            font_size: self.width / 10
+
+        Button:
+            background_color: '#ee5146'
+            text: "Wish List"
+            font_size: self.width / 10
+            on_press:
+                root.reset_page()
+                app.root.current = "wish_list_screen"
+
+        Button:
+            background_color: '#ee5146'
+            text: "Delete Book"
+            font_size: self.width / 10
+

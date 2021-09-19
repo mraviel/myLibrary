@@ -60,6 +60,4 @@ def find_book(book, driver_path=PATH):
 
 
 if __name__ == "__main__":
-    book_detail = find_book("השנאה שנתתם")
-    for i in book_detail:
-        print(i)
+    pass
