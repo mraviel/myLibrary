@@ -5,12 +5,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from os import path
+from bidi.algorithm import get_display
+
 
 """ Bot to find the book details,
     From --> 'https://simania.co.il'. """
 
 # Path to chrome driver.
 PATH = path.abspath('chromedriver')
+
+
+# Add \n to summary for new lines.
+def new_lines(text):
+    letter_list = text.split(' ')
+    count = len(letter_list)
+    new_text = str()
+    while count >= 0:
+        line = ' '.join(letter_list[:12] + ['\n'])
+        new_text += line
+        letter_list = letter_list[12:]
+        count -= 12
+    return new_text
 
 
 def find_book(book, driver_path=PATH):
@@ -49,7 +64,15 @@ def find_book(book, driver_path=PATH):
             return None
 
     try:
-        book_details = [book_name.text, author.text, summary.text, image.get_attribute('src')]
+        # Save text as RTL (right to left).
+        book_name_text = get_display(book_name.text)
+        author_text = get_display(author.text)
+        summary_text = get_display(summary.text)
+
+        # Limit the letters in one line.
+        summary_text = new_lines(summary_text)
+
+        book_details = [book_name_text, author_text, summary_text, image.get_attribute('src')]
 
         driver.quit()
         return book_details
