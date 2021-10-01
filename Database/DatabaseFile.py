@@ -53,8 +53,7 @@ class Database:
         try:
             # Keep track of UserID column.
             order = '''SELECT * FROM {0} ORDER BY {1} DESC LIMIT 1'''.format(table, id)
-            i = self.cur.execute(order)
-            count_id = i.fetchall()[0][0] + 1
+            count_id = self.cur.execute(order).fetchall()[0][0] + 1
 
         except sqlite3.IntegrityError and IndexError as e:
             print(str(e))
@@ -121,8 +120,7 @@ class Database:
         """ Add new book to wishlist. """
 
         def get_id(question):
-            id = self.cur.execute(question)
-            return id.fetchall()[0][0]
+            return self.cur.execute(question).fetchall()[0][0]
 
         book_name = book_details[0]
         # Keep track for ID.
@@ -142,3 +140,15 @@ class Database:
 
         self.conn.commit()  # Commit the changes.
 
+    def delete_wish_list_book(self, book_name):
+        """ Delete book from database. """
+
+        # Find the book ID for deletion.
+        sql = ''' SELECT BookID FROM Books WHERE Name="{0}" '''.format(book_name)
+        book_id = self.cur.execute(sql).fetchone()[0]
+
+        # Delete book by BookID.
+        sql = ''' DELETE FROM WishList WHERE BookID={0} '''.format(book_id)
+        self.cur.execute(sql)
+
+        self.conn.commit()

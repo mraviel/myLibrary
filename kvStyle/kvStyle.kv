@@ -219,4 +219,7 @@ WindowManager:
             background_color: '#ee5146'
             text: "Delete Book"
             font_size: self.width / 10
+            on_press:
+                root.delete_book()
+                app.root.current = "wish_list_screen"
 

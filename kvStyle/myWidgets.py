@@ -39,10 +39,12 @@ class Book(AsyncImageButton):
     def on_press(self):
         super(Book, self).on_press()
 
-        self.book_page()
+        # self.book_page()
 
+
+    """
     def book_page(self):
-        """ Book Page. Switch screen and Create widget for book page. """
+        "" Book Page. Switch screen and Create widget for book page. ""
 
         book_image = AsyncImage(source=self.image,
                                 pos=(600, 90))
@@ -73,3 +75,4 @@ class Book(AsyncImageButton):
         self.manager.ids.book_window.ids.float.add_widget(name_label)
         self.manager.ids.book_window.ids.float.add_widget(author_label)
         self.manager.ids.book_window.ids.scroll.add_widget(summary_label)
+    """

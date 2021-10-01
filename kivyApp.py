@@ -36,6 +36,38 @@ kivy.require(kivy.__version__)
 LabelBase.register(name="Arial", fn_regular=path.join(fonts_path, "arial.ttf"))
 
 
+def add_book_widgets(manager, book):
+    book_image = AsyncImage(source=book.image,
+                            pos=(600, 90))
+
+    name_label = Label(text=' / ' + book.book_name,
+                       font_size=22,
+                       font_name="Arial",
+                       pos=(300, 300))
+
+    author_label = Label(text=book.author,
+                         font_size=22,
+                         font_name="Arial",
+                         pos=(300, 270))
+
+    summary_label = Label(text=book.summary,
+                          font_size=16,
+                          font_name="Arial",
+                          halign="right",
+                          size=(400, 400),
+                          padding=(50, 20),
+                          size_hint=(None, None))
+
+    # Change screen to book_screen.
+    manager.current = "book_screen"
+
+    # Add the widget to the float layout.
+    manager.ids.book_window.ids.float.add_widget(book_image)
+    manager.ids.book_window.ids.float.add_widget(name_label)
+    manager.ids.book_window.ids.float.add_widget(author_label)
+    manager.ids.book_window.ids.scroll.add_widget(summary_label)
+
+
 class LoginWindow(Screen):
     username = ObjectProperty(None)
     password = ObjectProperty(None)
@@ -72,13 +104,15 @@ class LoginWindow(Screen):
         for book in my_books:
             book_details = book[2:]  # Get the relevant info, book info.
             my_book = Book(book_details, self.manager)
+            my_book.bind(on_press=self.update_book_page)
             self.manager.ids.wish_list_window.ids.grid.add_widget(my_book)  # Show the image on the grid.
 
     def update_book_page(self, book):
         """ Change the current screen to book page.
             Update the book page by book that was clicked."""
 
-        pass
+        add_book_widgets(self.manager, book)
+        q4.put(book)
 
 
 class SignupWindow(Screen):
@@ -145,12 +179,20 @@ class WishListWindow(Screen):
                 pass
             else:
                 print("print on screen... ")
-                book = Book(book_details, self.manager)
-                self.layout.add_widget(book)
+                my_book = Book(book_details, self.manager)
+                my_book.bind(on_press=self.update_book_page)
+                self.layout.add_widget(my_book)
 
         # Thread that get info and print to screen.
         pop_book_thread = threading.Thread(target=pop_book, args=(), daemon=True)
         pop_book_thread.start()
+
+    def update_book_page(self, book):
+        """ Change the current screen to book page.
+            Update the book page by book that was clicked."""
+
+        add_book_widgets(self.manager, book)
+        q4.put(book)
 
 
 class BooksReadWindow(Screen):
@@ -180,9 +222,20 @@ class BookWindow(Screen):
 
     def reset_page(self):
         """ Clear the screen and right after it build the init again. """
+        q4.queue.clear()  # Clear the queue when data is not relevant.
 
         self.canvas.clear()
         self.__init__()
+
+    def delete_book(self):
+        """ Delete the book and Clear the page. """
+        book = q4.get()  # Book Widget
+        book_name = book.book_name
+
+        q.put([4, [book_name]])  # Pass the info to client.
+
+        self.manager.ids.wish_list_window.ids.grid.remove_widget(book)  # Remove the book from the WishList window.
+        self.reset_page()  # Clear widgets from book page.
 
 
 class WindowManager(ScreenManager):
@@ -202,6 +255,7 @@ if __name__ == "__main__":
     q1 = Queue()  # isFound -> True / Flase
     q2 = Queue()  # wish_list_book -> [(), ()]
     q3 = Queue()  # book_details  --> [name, author, summary, image]
+    q4 = Queue()  # book that pass for delete.
 
     # Start new thread for the network connection.
     x = threading.Thread(target=main, args=(q, q1, q2, q3, ), daemon=True)

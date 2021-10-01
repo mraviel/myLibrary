@@ -23,7 +23,7 @@ def main(q, q1, q2, q3):
     else:
         host = sys.argv[1]
 
-    port = 5042
+    port = 5043
     buffer = 4096
     data_to_send = []
 

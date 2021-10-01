@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5042
+    port = 5043
 
     database = Database()
 
@@ -141,6 +141,10 @@ if __name__ == "__main__":
                             book_name_q.put(data[1][0])
                             username_q.put(data[1][1])
                             sock_q.put(sock)
+
+                        elif data[0] == 4:
+                            book_name = data[1][0]
+                            database.delete_wish_list_book(book_name)
 
                         else:
                             pass
