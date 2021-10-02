@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # List to keep track of socket descriptors
     connected_list = []
     buffer = 4096
-    port = 5043
+    port = 5044
 
     database = Database()
 
@@ -144,7 +144,8 @@ if __name__ == "__main__":
 
                         elif data[0] == 4:
                             book_name = data[1][0]
-                            database.delete_wish_list_book(book_name)
+                            username = data[2]
+                            database.delete_wish_list_book(book_name, username)
 
                         else:
                             pass

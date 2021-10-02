@@ -23,9 +23,10 @@ def main(q, q1, q2, q3):
     else:
         host = sys.argv[1]
 
-    port = 5043
+    port = 5044
     buffer = 4096
     data_to_send = []
+    username = str()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
@@ -57,6 +58,7 @@ def main(q, q1, q2, q3):
         # Data from kivy app.
         try:
             data_transferred = q.get_nowait()
+            data_transferred.append(username)
         except queue.Empty:
             data_transferred = [0, []]
 
@@ -77,6 +79,7 @@ def main(q, q1, q2, q3):
 
             # Recv all books in WishList.
             if isFound:
+                username = data_transferred[1]["USERNAME"]
                 wish_list_books = b''
                 while True:
                     data_recv = s.recv(buffer)

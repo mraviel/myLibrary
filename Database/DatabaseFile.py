@@ -140,15 +140,19 @@ class Database:
 
         self.conn.commit()  # Commit the changes.
 
-    def delete_wish_list_book(self, book_name):
+    def delete_wish_list_book(self, book_name, username):
         """ Delete book from database. """
 
         # Find the book ID for deletion.
         sql = ''' SELECT BookID FROM Books WHERE Name="{0}" '''.format(book_name)
         book_id = self.cur.execute(sql).fetchone()[0]
 
+        # Find the user ID for deletion.
+        sql = ''' Select UserID FROM Users WHERE Username="{0}" '''.format(username)
+        user_id = self.cur.execute(sql).fetchone()[0]
+
         # Delete book by BookID.
-        sql = ''' DELETE FROM WishList WHERE BookID={0} '''.format(book_id)
+        sql = ''' DELETE FROM WishList WHERE UserID={0} AND BookID={1} '''.format(user_id, book_id)
         self.cur.execute(sql)
 
         self.conn.commit()
