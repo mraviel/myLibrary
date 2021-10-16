@@ -115,11 +115,11 @@ if __name__ == "__main__":
                         continue
                     else:
                         # What to do with the data recv?
-                        # print(data)
 
                         # Insert the data into the database.
                         if data[0] == 1:
-                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data[1]][0]  # (USERNAME, PASSWORD)
+                            # (USERNAME, PASSWORD)
+                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD']) for d in data[1]][0]
                             found = database.login(user)
                             send_to_all(sock, str(found).encode())
                             name = user[0]
@@ -137,7 +137,8 @@ if __name__ == "__main__":
                                 print("Client ({0}) Login Failed".format((i, p)))
 
                         elif data[0] == 2:
-                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]  # (USERNAME, PASSWORD, EMAIL)
+                            # (USERNAME, PASSWORD, EMAIL)
+                            user = [tuple(data[1][k] for k in ['USERNAME', 'PASSWORD', 'EMAIL']) for d in data[1]][0]
                             database.add_user_signup(user)
 
                         elif data[0] == 3:

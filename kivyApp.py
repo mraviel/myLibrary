@@ -58,7 +58,8 @@ def add_book_widgets(manager, book, state):
                           padding=(50, 20),
                           size_hint=(None, None))
 
-    # Open Book page depend on state.
+    # Open Book page depend on state:
+
     if state == "wish_list":
 
         # Change screen to book_screen.

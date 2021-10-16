@@ -17,7 +17,7 @@ def display():
 
 def main(q, q1, q2, q3, q5):
 
-    # Can log to ip via command line argument
+    # Can log to ip via command line argument.
     if len(sys.argv) < 2:
         host = input("Enter host ip address: ")
     else:

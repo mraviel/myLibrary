@@ -127,7 +127,6 @@ class Database:
             print("Book Already exist ", e)
 
         self.conn.commit()  # Commit the changes.
-        print("GOOD JOB!!!")
 
     def add_book_to_table(self, book_name, username, table):
         """ Add new book to wishlist. """
