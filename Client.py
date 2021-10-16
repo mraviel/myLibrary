@@ -15,7 +15,7 @@ def display():
     sys.stdout.flush()
 
 
-def main(q, q1, q2, q3):
+def main(q, q1, q2, q3, q5):
 
     # Can log to ip via command line argument
     if len(sys.argv) < 2:
@@ -80,16 +80,18 @@ def main(q, q1, q2, q3):
             # Recv all books in WishList.
             if isFound:
                 username = data_transferred[1]["USERNAME"]
-                wish_list_books = b''
+                books = b''
                 while True:
                     data_recv = s.recv(buffer)
-                    wish_list_books += data_recv
+                    books += data_recv
                     if len(data_recv) < buffer:
                         break
 
                 # Send data to kivy app. [(), (), ...]
-                wish_list_books = pickle.loads(wish_list_books)
-                q2.put(wish_list_books)
+                books = pickle.loads(books)
+
+                q2.put(books['wish_list'])
+                q5.put(books['books_read'])
 
 
 if __name__ == "__main__":

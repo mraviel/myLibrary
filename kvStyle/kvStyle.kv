@@ -5,8 +5,11 @@ WindowManager:
     WishListWindow:
         id: wish_list_window
     BooksReadWindow:
-    BookWindow:
-        id: book_window
+        id: books_read_window
+    BookWindowWishList:
+        id: book_window_wish_list
+    BookWindowBooksRead:
+        id: book_window_books_read
 
 <LoginWindow>:
     name: "login_screen"
@@ -191,11 +194,26 @@ WindowManager:
 <BooksReadWindow>:
     name: "books_read_screen"
 
-    Button:
-        text: "Books i read!"
+    Label:
+        text: "Books I Read..."
+        font_size: self.width / 10
+        font_name: "Arial"
+        pos_hint: {"center_x": 0.5, "center_y": 0.7}
 
-<BookWindow>
-    name: "book_screen"
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1, 0.1)
+        pos_hint: {"center_x": 0.5, "center_y": 0.9}
+
+        Button:
+            background_color: '#ee5146'
+            text: "Wish List"
+            font_size: self.width / 10
+            on_press:
+                app.root.current = "wish_list_screen"
+
+<BookWindowWishList>
+    name: "book_screen_wish_list"
 
     BoxLayout:
         orientation: 'horizontal'
@@ -206,6 +224,9 @@ WindowManager:
             background_color: '#ee5146'
             text: "I Read this"
             font_size: self.width / 10
+            on_press:
+                root.read_this()
+                app.root.current = "wish_list_screen"
 
         Button:
             background_color: '#ee5146'
@@ -222,4 +243,37 @@ WindowManager:
             on_press:
                 root.delete_book()
                 app.root.current = "wish_list_screen"
+
+
+<BookWindowBooksRead>
+    name: "book_screen_books_read"
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1, 0.1)
+        pos_hint: {"center_x": 0.5, "center_y": 0.9}
+
+        Button:
+            background_color: '#ee5146'
+            text: "Add To Wish List"
+            font_size: self.width / 10
+            on_press:
+                root.transfer_to_wish_list()
+                app.root.current = "books_read_screen"
+
+        Button:
+            background_color: '#ee5146'
+            text: "Wish List"
+            font_size: self.width / 10
+            on_press:
+                root.reset_page()
+                app.root.current = "wish_list_screen"
+
+        Button:
+            background_color: '#ee5146'
+            text: "Delete Book"
+            font_size: self.width / 10
+            on_press:
+                root.delete_book()
+                app.root.current = "books_read_screen"
 

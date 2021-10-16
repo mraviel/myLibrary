@@ -99,6 +99,19 @@ class Database:
 
         return self.cur.execute(all_books).fetchall()
 
+    def all_books_read(self, user):
+        """ Func that return list of all BooksRead.
+        Return: [(), (), ()] """
+
+        all_books = "SELECT BooksRead.ID, Users.USERNAME, Books.name, Books.Author, Books.Description, Books.Image " \
+                    "FROM BooksRead " \
+                    "INNER JOIN Users ON BooksRead.UserID=Users.UserID " \
+                    "INNER JOIN Books ON BooksRead.BookID=Books.BookID " \
+                    "WHERE Users.USERNAME='{0}' " \
+                    "ORDER BY BooksRead.ID;".format(user[0])
+
+        return self.cur.execute(all_books).fetchall()
+
     def add_new_book(self, book_details):
         """ Add new book to the Books table. """
 
@@ -116,15 +129,14 @@ class Database:
         self.conn.commit()  # Commit the changes.
         print("GOOD JOB!!!")
 
-    def add_book_to_wishlist(self, book_details, username):
+    def add_book_to_table(self, book_name, username, table):
         """ Add new book to wishlist. """
 
         def get_id(question):
             return self.cur.execute(question).fetchall()[0][0]
 
-        book_name = book_details[0]
         # Keep track for ID.
-        count_id = self.id_tracker("WishList", "ID")
+        count_id = self.id_tracker(table, "ID")
 
         # Sql question.
         user_id = ''' SELECT UserID FROM Users WHERE Username="{0}" '''.format(username)
@@ -133,14 +145,17 @@ class Database:
         user_id = get_id(user_id)
         book_id = get_id(book_id)
 
+        sql = ''' INSERT INTO {0} Values ({1}, {2}, {3}) '''.format(table, count_id, user_id, book_id)
+
         try:
-            self.cur.execute(''' INSERT INTO WishList Values (?, ?, ?) ''', (count_id, user_id, book_id))
+            # self.cur.execute(''' INSERT INTO WishList Values (?, ?, ?) ''', (count_id, user_id, book_id))
+            self.cur.execute(sql)
         except sqlite3.IntegrityError as e:
-            print("Book Already exist in WishList", e)
+            print("Book Already exist in " + str(table), e)
 
         self.conn.commit()  # Commit the changes.
 
-    def delete_wish_list_book(self, book_name, username):
+    def delete_book_from_table(self, book_name, username, table):
         """ Delete book from database. """
 
         # Find the book ID for deletion.
@@ -152,7 +167,13 @@ class Database:
         user_id = self.cur.execute(sql).fetchone()[0]
 
         # Delete book by BookID.
-        sql = ''' DELETE FROM WishList WHERE UserID={0} AND BookID={1} '''.format(user_id, book_id)
+        sql = ''' DELETE FROM {0} WHERE UserID={1} AND BookID={2} '''.format(table, user_id, book_id)
         self.cur.execute(sql)
 
         self.conn.commit()
+
+    def transfer_book(self, book_name, username, from_table, to_table):
+        """ Transfer the book from one table to another. (WishList -> BooksRead) / (BooksRead -> WishList) """
+
+        self.delete_book_from_table(book_name, username, from_table)  # Remove book from table ?
+        self.add_book_to_table(book_name, username, to_table)  # Add book to table ?

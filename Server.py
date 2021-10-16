@@ -43,7 +43,7 @@ def bot_activate(book_name, user_name, sock_d):
             pass
         else:
             database.add_new_book(book_details)
-            database.add_book_to_wishlist(book_details, username)
+            database.add_book_to_table(book_details[0], username, "WishList")
 
         print("Client ({0}) ({1}) Send Info".format((i, p), username))
         send_to_all(sockd, pickle.dumps(book_details))
@@ -126,9 +126,13 @@ if __name__ == "__main__":
 
                             # Send the wish list books to show in the app.
                             if found:
+                                d = {}
                                 print("Client ({0}) Login Successfully ({1})".format((i, p), name))
-                                wish_list_send = pickle.dumps(database.all_wish_list_books(user))
-                                send_to_all(sock, wish_list_send)
+                                d['wish_list'] = database.all_wish_list_books(user)
+                                d['books_read'] = database.all_books_read(user)
+                                send_to_all(sock, pickle.dumps(d))
+
+                                # Need to send also BooksRead.
                             else:
                                 print("Client ({0}) Login Failed".format((i, p)))
 
@@ -143,9 +147,28 @@ if __name__ == "__main__":
                             sock_q.put(sock)
 
                         elif data[0] == 4:
+                            # Delete book from WishList.
                             book_name = data[1][0]
                             username = data[2]
-                            database.delete_wish_list_book(book_name, username)
+                            database.delete_book_from_table(book_name, username, "WishList")
+
+                        elif data[0] == 5:
+                            # Delete book from BooksRead.
+                            book_name = data[1][0]
+                            username = data[2]
+                            database.delete_book_from_table(book_name, username, "BooksRead")
+
+                        elif data[0] == 6:
+                            # Mark book as read.
+                            book_name = data[1][0]
+                            username = data[2]
+                            database.transfer_book(book_name, username, "WishList", "BooksRead")
+
+                        elif data[0] == 7:
+                            # Back to wish list.
+                            book_name = data[1][0]
+                            username = data[2]
+                            database.transfer_book(book_name, username, "BooksRead", "WishList")
 
                         else:
                             pass
