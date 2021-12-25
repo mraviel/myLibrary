@@ -1,0 +1,7 @@
+*.pyc
+**/__pycache__
+.venv/
+.venvMac/
+.DS_Store
+Server/Database/dataB.db
+.idea/
