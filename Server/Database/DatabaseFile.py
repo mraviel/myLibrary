@@ -13,7 +13,7 @@ class Database:
     @staticmethod
     def crate_connection():
         """ Create a database connection to a SQLite database """
-        db_file = 'dataB'
+        db_file = 'dataB.db'
         dataB_path = path.abspath("Database")  # The path to the 'Database' Folder.
         try:
             conn = sqlite3.connect(path.join(dataB_path, db_file))  # Create the file in the direct folder.

@@ -3,5 +3,5 @@
 .venv/
 .venvMac/
 .DS_Store
-Server/Database/dataB
+Server/Database/dataB.db
 .idea/
