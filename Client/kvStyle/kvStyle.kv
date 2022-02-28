@@ -1,3 +1,5 @@
+#:import Factory kivy.factory.Factory
+
 WindowManager:
     LoginWindow:
         id: login_window
@@ -10,6 +12,24 @@ WindowManager:
         id: book_window_wish_list
     BookWindowBooksRead:
         id: book_window_books_read
+
+<SearchBook@Popup>
+    auto_dismiss: True
+    title: "This may take a few seconds"
+    size_hint: 0.6, 0.2
+    pos_hint: {"x": 0.2, "top": 0.9}
+
+    Label:
+        text: "Searching for the book..."
+
+<LoginFail@Popup>
+    auto_dismiss: True
+    title: "Login Failed"
+    size_hint: 0.6, 0.2
+    pos_hint: {"x": 0.2, "top": 0.9}
+
+    Label:
+        text: "Press anywhere to keep trying"
 
 <LoginWindow>:
     name: "login_screen"
@@ -74,8 +94,9 @@ WindowManager:
                 background_color: '#ee5146'
                 on_press:
                     a = root.login()
-                    if a is not None and a: app.root.current = "wish_list_screen"
-                    if a is not None and a: root.manager.transition.direction = "down"
+                    if a is not None and a: app.root.current = "wish_list_screen"; root.manager.transition.direction = "down"
+                    else: Factory.LoginFail().open()
+
 
 
 <SignupWindow>:
@@ -181,6 +202,7 @@ WindowManager:
             text: "Add New Book"
             on_press:
                 a = root.add_new_book()
+                Factory.SearchBook().open()
 
         Button:
             background_color: '#ee5146'
