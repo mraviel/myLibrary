@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 from os import path
 from bidi.algorithm import get_display
+import chromedriver_autoinstaller
+
 
 
 """ Bot to find the book details,
@@ -13,6 +15,11 @@ from bidi.algorithm import get_display
 
 # Path to chrome driver.
 PATH = path.abspath('chromedriver')
+
+""" Check if the current version of chromedriver exists
+and if it doesn't exist, download it automatically,
+then add chromedriver to path """
+chromedriver_autoinstaller.install()
 
 
 # Add \n to summary for new lines.
@@ -30,7 +37,7 @@ def new_lines(text):
 
 def find_book(book, driver_path=PATH):
 
-    driver = webdriver.Chrome(driver_path)  # driver.
+    driver = webdriver.Chrome()  # Get the update driver.
     driver.get("https://simania.co.il")  # Enter the website.
 
     search = driver.find_element_by_id("query")

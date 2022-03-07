@@ -5,3 +5,4 @@
 .DS_Store
 Server/Database/dataB.db
 .idea/
+.env/

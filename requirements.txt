@@ -23,3 +23,4 @@ trio==0.19.0
 trio-websocket==0.9.2
 urllib3==1.26.7
 wsproto==1.0.0
+chromedriver-autoinstaller==0.3.1
