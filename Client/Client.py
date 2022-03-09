@@ -39,7 +39,8 @@ def main(q, q1, q2, q3, q5):
         sys.exit()
 
     while 1:
-        socket_list = [sys.stdin, s]
+        # socket_list = [sys.stdin, s]  -- before.
+        socket_list = [s]
 
         # Get the list of sockets which are readable
         rList, wList, error_list = select.select(socket_list, [], [], 1)

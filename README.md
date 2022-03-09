@@ -16,8 +16,7 @@ Every-time the user search for book, the server will activate a bot to find the 
 The project optimize for Hebrew books especially.
 English books support will come soon.
 
-***The project only work in Linux and Macos,
-Currently the project have no support for Windows os.***
+***The project works on Linux MacOS and Windows. ***
 
 ## **Technologies** 
 The project created with:
@@ -27,13 +26,19 @@ The project created with:
 * selenium 
 
 ## **Setup**
-***Make sure you have python in your computer.***
+***Make sure you have python and virtualenv in your computer.***
 
 
-In the project  directory run:
+In the project  directory run:  
+Linux \ MacOS:
 ```python
 $ virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
+Windows:
+```python
+$ virtualenv .env && .env/Scripts/activate && pip install -r requirements.txt
+```
+
 Navigate to the Server folder and run:
 ```python
 $ python Server.py
