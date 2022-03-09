@@ -36,7 +36,7 @@ $ virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
 Windows:
 ```python
-$ virtualenv .env && .env/Scripts/activate && pip install -r requirements.txt
+$ virtualenv .env && .env\Scripts\activate && pip install -r requirements.txt
 ```
 
 Navigate to the Server folder and run:
